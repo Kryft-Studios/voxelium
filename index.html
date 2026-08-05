@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Voxelium Game Editor</title>
+
+    <link rel="stylesheet" href="./src/index.css">
+
+    <link rel="stylesheet" href="./src/patch.css">
+</head>
+
+<body>
+
+    <section id="hero">
+
+        <img id="world-image" src="1559446.jpg" alt="Voxelium World">
+
+        <div id="clouds"></div>
+
+        <div id="Voxelium">
+            <h1>Voxelium</h1>
+            <p>Game Maker</p>
+        </div>
+
+    </section>
+
+
+    <section id="content">
+
+        <h2>Create Worlds</h2>
+
+        <p>
+            Voxelium is a powerful game maker that lets you make games easily with a simple UI
+        </p>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3><img src="python.svg"></h3>
+                <p>Create worlds with powerful tools.</p>
+            </div>
+
+            <div class="card">
+                <h3>⚙️ Script</h3>
+                <p>Bring your ideas to life.</p>
+            </div>
+
+            <div class="card">
+                <h3>🌎 Share</h3>
+                <p>Publish your creations.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+<script>
+const image = document.getElementById("world-image");
+const clouds = document.getElementById("clouds");
+const title = document.getElementById("Voxelium");
+const hero = document.getElementById("hero");
+
+window.addEventListener("scroll", () => {
+
+    const heroHeight = hero.offsetHeight - window.innerHeight;
+
+    const progress = Math.min(
+        Math.max(window.scrollY / heroHeight, 0),
+        1
+    ) + 0.1;
+
+
+    // Image disappears
+    image.style.filter = `
+        blur(${progress * 25}px)
+    `;
+
+    image.style.transform = `
+        scale(${1 + progress * 0.15})
+    `;
+
+    image.style.opacity =
+        1 - progress;
+
+
+    // Clouds appear in middle
+    const cloudProgress =
+        Math.sin(progress * Math.PI);
+
+    clouds.style.opacity =
+        cloudProgress;
+
+
+    // Title fades away
+    title.style.opacity =
+        1 - progress;
+
+});
+
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>'
+<script defer>lucide.createIcons()</script>
+</body>
+</html>
