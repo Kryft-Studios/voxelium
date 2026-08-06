@@ -1,139 +1,74 @@
-
-
-/* 
- * 
- *          noa hello-world example
- * 
- *  This is a bare-minimum example world, intended to be a 
- *  starting point for hacking on noa game world content.
- * 
-*/
-
-
-
-// Engine options object, and engine instantiation.
+// noa Engine & internal Types
 import { Engine } from 'noa-engine'
+import { PositionState } from 'noa-engine/dist/src/components/position'
+import { PhysicsState } from 'noa-engine/dist/src/components/physics'
+import { ChunkStorage } from 'noa-engine/dist/src/lib/util'
 
-
+// create an engine
 let opts = {
     debug: true,
-    silent:false,
+    silent: false,
     showFPS: true,
     chunkSize: 32,
     chunkAddDistance: 2.5,
-    chunkRemoveDistance: 3.5,playerStart: [0,0,0]
-    
-    // See `test` example, or noa docs/source, for more options
+    chunkRemoveDistance: 3.5, 
+    playerStart: [0, 0, 0]
 }
-let  noa = new Engine(opts)
+let noa = new Engine(opts)
 
 
+// basic blocks
 
-/*
- *
- *      Registering voxel types
- * 
- *  Two step process. First you register a material, specifying the 
- *  color/texture/etc. of a given block face, then you register a 
- *  block, which specifies the materials for a given block type.
- * 
-*/
-
-// block materials (just colors for this demo)
 const brownish = [0.45, 0.36, 0.22]
-const greenish = [0.1, 0.8, 0.2]
 noa.registry.registerMaterial('dirt', { color: brownish })
-noa.registry.registerMaterial('grass', { color: greenish })
-
-
-// block types and their material names
 const dirtID = noa.registry.registerBlock(1, { material: 'dirt' })
-const grassID = noa.registry.registerBlock(2, { material: 'grass' })
 
-
-
-
-/*
- * 
- *      World generation
- * 
- *  The world is divided into chunks, and `noa` will emit an 
- *  `worldDataNeeded` event for each chunk of data it needs.
- *  The game client should catch this, and call 
- *  `noa.world.setChunkData` whenever the world data is ready.
- *  (The latter can be done asynchronously.)
- * 
-*/
-
-// simple height map worldgen function
-function getVoxelID(x: number, y: number, z: number) {
-    return 0 // signifying empty space
-}
 
 // register for world events
 noa.world.on('worldDataNeeded', function (id, data, x, y, z) {
+    // TODO: Implement loading with .bloxdschem read
     // `id` - a unique string id for the chunk
     // `data` - an `ndarray` of voxel ID data (see: https://github.com/scijs/ndarray)
     // `x, y, z` - world coords of the corner of the chunk
-   /* for (var i = 0; i < data.shape[0]; i++) {
-        for (var j = 0; j < data.shape[1]; j++) {
-            for (var k = 0; k < data.shape[2]; k++) {
-                var voxelID = getVoxelID(x + i, y + j, z + k)
-                data.set(i, j, k, voxelID)
-            }
-        }
-    }*/
-   noa.setBlock(1, 0, 0, 0)
-noa.world.setBlockID(1,0,0,0)
+    /* for (var i = 0; i < data.shape[0]; i++) {
+         for (var j = 0; j < data.shape[1]; j++) {
+             for (var k = 0; k < data.shape[2]; k++) {
+                 var voxelID = getVoxelID(x + i, y + j, z + k)
+                 data.set(i, j, k, voxelID)
+             }
+         }
+     }*/
+
+    // the only code for now.
+    noa.setBlock(dirtID, 0, 0, 0)
+    noa.world.setBlockID(1, 0, 0, 0)
     // tell noa the chunk's terrain data is now set
     noa.world.setChunkData(id, data)
 })
-
-
-
-/*
- * 
- *      Create a mesh to represent the player:
- * 
-*/
+function chkIdToChkPos(id:string){
+    // noa stores chunk in x|y|z
+    return id.split("|").map(Number)
+}
+const strg = noa.world._storage
+noa.world.on("chunkBeingRemoved",(id,array)=>{///
+    console.log(array.data)
+    console.log(strg.getChunkByIndexes(...chkIdToChkPos(id)))
+})
+//noa.world.on("chunkAdded",console.log)
 
 // get the player entity's ID and other info (position, size, ..)
 const player = noa.playerEntity
-let dat = noa.entities.getPositionData(player) as PositionState
-const m = noa.ents.getMovement(noa.playerEntity)
-const pla = noa.ents.getPhysics(player) as PhysicsState;
-m.airJumps = 0
-m.standingFriction = 20
-m.runningFriction = 2
-let w = dat.width
-let h = dat.height
+let posdat = noa.entities.getPositionData(player) as PositionState
+const movement = noa.ents.getMovement(noa.playerEntity)
+const phy = noa.ents.getPhysics(player) as PhysicsState;
 
-// add a mesh to represent the player, and scale it, etc.
-import { CreateBox } from '@babylonjs/core/Meshes/Builders/boxBuilder'
-import { PositionState } from 'noa-engine/dist/src/components/position'
-import { PhysicsState } from 'noa-engine/dist/src/components/physics'
 
-let scene = noa.rendering.getScene()
-/*let mesh = CreateBox('player-mesh', {}, scene)
-mesh.scaling.x = w
-mesh.scaling.z = w
-mesh.scaling.y = h
-// this adds a default flat material, without specularity
-mesh.material = noa.rendering.makeStandardMaterial("mat")
-*/
-noa.physics.gravity = [0,0,0];
+
+movement.airJumps = 0
+noa.world.on
+
+noa.physics.gravity = [0, 0, 0];
 (noa.ents.getPhysicsBody(noa.playerEntity))?.resting
-
-// add "mesh" component to the player entity
-// this causes the mesh to move around in sync with the player entity
-//@ts-ignore
-/*noa.entities.addComponent(player, noa.entities.names.mesh, {
-    mesh: mesh,
-    // offset vector is needed because noa positions are always the 
-    // bottom-center of the entity, and Babylon's CreateBox gives a 
-    // mesh registered at the center of the box
-    offset: [0, h / 2, 0],
-})*/
 
 
 /*
@@ -143,7 +78,13 @@ noa.physics.gravity = [0,0,0];
 */
 
 // add a key binding for "E" to do the same as alt-fire
-
+noa.inputs.down.on("jump", function () {
+    noa.ents.getPhysics(noa.playerEntity)?.body.applyForce([0, 10, 0])
+})
+//register key
+noa.inputs.state.crouch = false;
+//@ts-ignore
+noa.inputs._keyBindmap.KeyC = ["crouch"]
 // each tick, consume any scroll events and use them to zoom camera
 noa.on('tick', function (dt) {
     var scroll = noa.inputs.pointerState.scrolly
@@ -152,14 +93,23 @@ noa.on('tick', function (dt) {
         if (noa.camera.zoomDistance < 0) noa.camera.zoomDistance = 0
         if (noa.camera.zoomDistance > 10) noa.camera.zoomDistance = 10
     }
+    if (noa.inputs.state.jump) {
+        noa.ents.getPhysics(noa.playerEntity)?.body.applyImpulse([0, 2, 0])
+    }
+    if (noa.inputs.state.crouch) {
+        noa.ents.getPhysics(noa.playerEntity)?.body.applyImpulse([0, -2, 0])
+
+    }
+
 })
 
 noa.on("tick", () => {
     const move = noa.ents.getMovement(noa.playerEntity)
-    const body = noa.ents.getPhysicsBody(noa.playerEntity) 
+    const body = noa.ents.getPhysicsBody(noa.playerEntity)
 
-    if (!move.running && body) {
+    if (!move.running && body && !noa.inputs.state.crouch && !noa.inputs.state.jump) {
         body.velocity[0] = 0
         body.velocity[2] = 0
+        body.velocity[1] = 0
     }
 })

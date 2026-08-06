@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,96 +13,124 @@
 </head>
 
 <body>
-
+    <!-- #region cloud transition-->
     <section id="hero">
-
         <img id="world-image" src="1559446.jpg" alt="Voxelium World">
-
         <div id="clouds"></div>
-
         <div id="Voxelium">
             <h1>Voxelium</h1>
-            <p>Game Maker</p>
-        </div>
+            <p id="scroll-note">Scroll Down</p>
+            <!-- Simple Animation. Update:  I forgot css keyframes existed -->
+            <script defer>
+                const speed = 2;
+                let rn = 0;
+                let loopingDir = +0.01 * speed
+                const el = document.getElementById("scroll-note")
+                function loop() {
+                    if (el.hidden) return requestIdleCallback(loop);
+                    el.style.opacity = `` + rn;
+                    let a = rn += loopingDir;
+                    if (a > 1) {
+                        loopingDir = -.01 * speed;
+                    } else if (a < 0) {
+                        loopingDir = .01 * speed
+                    }
 
+                    requestIdleCallback(loop)
+                }
+                requestIdleCallback(loop)
+            </script>
+        </div>
     </section>
+    <script>
+        // Below is the cloud animation
+
+        // get elements
+        const image = document.getElementById("world-image");
+        const clouds = document.getElementById("clouds");
+        const title = document.getElementById("Voxelium");
+        const hero = document.getElementById("hero");
+        const scrollNote = document.getElementById("scroll-note")
+        // handle scroll
+        window.addEventListener("scroll", () => {
+            scrollNote.hidden = true;
+            // now get the hero's height
+            const heroHeight = hero.offsetHeight - window.innerHeight;
+
+            // get the scroll progress
+            const progress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1);
+            if (progress <= 0) scrollNote.hidden = false;
+            // Apply filters
+            image.style.filter = `blur(${progress * 25}px)`;
+            image.style.transform = `scale(${1 + progress * 0.15})`;
+            image.style.opacity = 1 - progress;
+
+            // Clouds appear in middle
+            const cloudProgress = Math.sin(progress * Math.PI);
+            clouds.style.opacity = cloudProgress;
+
+            // Title fades away
+            title.style.opacity = 1 - progress;
+
+        });
+
+    </script>
+    <!-- #endregion -->
 
 
     <section id="content">
+        <!--Page Contents-->
+        <div id="intro-div">
+            <h2>Create Worlds</h2>
+            <p>The next evolution of bloxd programming! No more confusing code.</p>
+            <div class="cards">
+                <div class="card">
+                    <h3>Use any language you want!</h3>
+                    <p><i><b>Ada, Java, GoLang, Python</b></i>, we support it all!</p>
+                    You can even make, Brainf***, why not?
+                    You can be a minecraft modder, godot developer, unity lover and still be a bloxd dev!
+                </div>
 
-        <h2>Create Worlds</h2>
+                <div class="card">
+                    <h3>Strong Developer Support</h3>
+                    <p>Want to play a audio? Use our <strong>VXAudioManager</strong></p>
+                    Got a function a thousand lines long? we'd manage it!
+                </div>
 
-        <p>
-            Voxelium is a powerful game maker that lets you make games easily with a simple UI
-        </p>
-
-        <div class="cards">
-
-            <div class="card">
-                <h3><img src="python.svg"></h3>
-                <p>Create worlds with powerful tools.</p>
+                <div class="card">
+                    <h3>High Performance Code</h3>
+                    <p>We generate to low level & fast code. Want <strong>Pointers</strong> in bloxd? Well now you can!
+                    </p>
+                    We'll auto manage the heap.
+                </div>
             </div>
-
-            <div class="card">
-                <h3>⚙️ Script</h3>
-                <p>Bring your ideas to life.</p>
-            </div>
-
-            <div class="card">
-                <h3>🌎 Share</h3>
-                <p>Publish your creations.</p>
-            </div>
-
         </div>
+        <div id = "project-div">
+            <h1 style="font-size:70px">Let's Go!</h1>
+            <div class="cards">
+                <button class="card" id = "open-proj">
+                    <h3>Open your Projects</h3>
+                    previews projects saved on your pc
+                </button>
+                <script defer>
 
+                </script>
+                <button class="card" id = "new-proj">
+                    <h3>Create a new Project</h3>
+                    creates a new world and saves it to your device
+                </button>
+                <script defer>
+                    document.getElementById("new-proj")
+                    .addEventListener("click",()=>{window.open("/gameeditor")})
+                </script>
+                <button class="card"><h3>Explore marketplace</h3>Explore third party and our assets</button>
+            </div>
+        </div>
     </section>
 
-
-<script>
-const image = document.getElementById("world-image");
-const clouds = document.getElementById("clouds");
-const title = document.getElementById("Voxelium");
-const hero = document.getElementById("hero");
-
-window.addEventListener("scroll", () => {
-
-    const heroHeight = hero.offsetHeight - window.innerHeight;
-
-    const progress = Math.min(
-        Math.max(window.scrollY / heroHeight, 0),
-        1
-    ) + 0.1;
-
-
-    // Image disappears
-    image.style.filter = `
-        blur(${progress * 25}px)
-    `;
-
-    image.style.transform = `
-        scale(${1 + progress * 0.15})
-    `;
-
-    image.style.opacity =
-        1 - progress;
-
-
-    // Clouds appear in middle
-    const cloudProgress =
-        Math.sin(progress * Math.PI);
-
-    clouds.style.opacity =
-        cloudProgress;
-
-
-    // Title fades away
-    title.style.opacity =
-        1 - progress;
-
-});
-
-</script>
-<script src="https://unpkg.com/lucide@latest"></script>'
-<script defer>lucide.createIcons()</script>
+    <!--    Lucide Icon Handler -->
+    <script src="https://unpkg.com/lucide@latest"></script>'
+    <script defer>lucide.createIcons()</script>
 </body>
+
 </html>

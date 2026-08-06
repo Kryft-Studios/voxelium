@@ -1,5 +1,7 @@
 import { ipcRenderer, contextBridge } from 'electron'
-
+import path from "node:path";
+const dev = process.env.VITE_DEV_SERVER_URL;
+const root = path.join(__dirname, "..")
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
   on(...args: Parameters<typeof ipcRenderer.on>) {
@@ -21,4 +23,4 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
   // You can expose other APTs you need here.
   // ...
-})
+});
