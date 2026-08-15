@@ -1,12 +1,12 @@
 import { Engine } from "noa-engine"
-import { Vector3, Vector4 } from "../types/vectors";
+import { VEC3, VEC4 } from "../types/vectors";
 
 interface Opts {
    debug: boolean, // default false
    silent: boolean, // default false
    playerHeight: number, // default 1.8
    playerWidth: number, // default 0.6
-   playerStart: Vector3, // default 0,10,0
+   playerStart: VEC3, // default 0,10,0
    playerAutoStep:boolean, // default true
    playerShadowComponent: boolean, //default true
    tickRate: number, //default 30
@@ -43,11 +43,11 @@ interface Opts {
    antiAlias: boolean,
    preserveDrawingBuffer: boolean,
    octreeBlockSize: number,
-   clearColor: Vector4,
-   ambientColor: Vector3,
-   lightVector: Vector3,
-   lightDiffuse: Vector3,
-   lightSpecular: Vector3,
+   clearColor: VEC4,
+   ambientColor: VEC3,
+   lightVector: VEC3,
+   lightDiffuse: VEC3,
+   lightSpecular: VEC3,
    manuallyControlChunkLoading: boolean,
    worldGenWhilePaused: boolean
 }
