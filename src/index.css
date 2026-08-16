@@ -1,144 +1,367 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 * {
     box-sizing: border-box;
 }
 
-
 html {
     scroll-behavior: smooth;
 }
 
-
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: white;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: #0b0b0d;
+    color: #e8e8eb;
+
     overflow-x: hidden;
 }
 
 
-
-/* HERO */
+/* ─────────────────────────────
+   HERO
+   ───────────────────────────── */
 
 #hero {
     height: 200vh;
     position: relative;
 }
 
-
 #world-image {
     position: sticky;
+
     top: 0;
+
     width: 100%;
     height: 100vh;
+
     object-fit: cover;
     display: block;
-    transition: filter .2s;
 
+    will-change: transform, filter, opacity;
 }
 
 
+/* dark overlay */
+
+#hero::after {
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.05),
+            rgba(0, 0, 0, 0.75)
+        );
+
+    z-index: 1;
+}
+
+
+/* ─────────────────────────────
+   CLOUDS
+   ───────────────────────────── */
 
 #clouds {
     position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background:
-        radial-gradient(circle at 30% 40%,
-            white 0%,
-            transparent 40%),
 
-        radial-gradient(circle at 70% 60%,
-            white 0%,
-            transparent 50%);
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 30% 40%,
+            rgba(255, 255, 255, 0.5) 0%,
+            transparent 40%
+        ),
+
+        radial-gradient(
+            circle at 70% 60%,
+            rgba(255, 255, 255, 0.4) 0%,
+            transparent 50%
+        );
+
     opacity: 0;
 
+    filter: blur(25px);
+
+    z-index: 2;
 }
 
 
-
-/* TITLE */
-
+/* ─────────────────────────────
+   TITLE
+   ───────────────────────────── */
 
 #Voxelium {
     position: fixed;
+
     top: 50%;
     left: 50%;
-    transform:translate(-50%, -50%);
+
+    transform: translate(-50%, -50%);
+
+    z-index: 3;
+
     text-align: center;
-    font-family: 'Cinzel', serif;
-    color: #edddb2;
-    padding: 35px 70px;
-    border-radius: 30px;
-    background: rgba(0, 0, 0, 0.01)
+
+    color: #ffffff;
+
+    pointer-events: none;
 }
-
-
 
 #Voxelium h1 {
     margin: 0;
-    font-size:clamp(60px, 10vw, 120px);
-    text-shadow: 0 0 20px rgb(14, 13, 13);
 
+    font-size: clamp(56px, 9vw, 120px);
+
+    font-weight: 700;
+
+    letter-spacing: -0.07em;
+
+    text-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.65);
 }
-
-
 
 #scroll-note {
-    margin: 10px 0 0;
-    font-size: 40px;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    color: #020201;
+    margin: 14px 0 0;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    letter-spacing: 0.04em;
+
+    color: rgba(255, 255, 255, 0.7);
 }
 
 
-
-/* CONTENT */
-
+/* ─────────────────────────────
+   CONTENT
+   ───────────────────────────── */
 
 #content {
+    position: relative;
+
+    z-index: 5;
+
     min-height: 100vh;
-    padding: 100px;
-    background:linear-gradient(white, #eee);
+
+    padding:
+        110px
+        clamp(24px, 7vw, 120px)
+        150px;
+
+    background: #0b0b0d;
+
     text-align: center;
 }
 
 
+/* section heading */
 
 #content h2 {
-    font-family: 'Cinzel', serif;
-    font-size: 70px;
+    margin: 0 0 16px;
+
+    font-family: Inter, system-ui, sans-serif;
+
+    font-size: clamp(36px, 5vw, 64px);
+
+    font-weight: 700;
+
+    letter-spacing: -0.055em;
+
+    color: #f5f5f7;
 }
 
 
+/* intro text */
 
-#content p {
-    font-size: 25px;
+#content > #intro-div > p {
+    max-width: 700px;
+
+    margin:
+        0 auto
+        55px;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+
+    color: #a1a1aa;
 }
 
 
+/* ─────────────────────────────
+   CARDS
+   ───────────────────────────── */
 
 .cards {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-}
+    display: grid;
 
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(240px, 300px)
+        );
+
+    justify-content: center;
+
+    gap: 14px;
+}
 
 
 .card {
-    width: 300px;
-    padding: 30px;
-    border-radius: 20px;
-    background: white;
-    box-shadow: 0 10px 30px #0002;
+    width: 100%;
 
+    min-height: 190px;
+
+    padding: 24px;
+
+    text-align: left;
+
+    border-radius: 12px;
+
+    border: 1px solid #29292f;
+
+    background: #131316;
+
+    color: #e8e8eb;
+
+    box-shadow: none;
+
+    transition:
+        transform 150ms ease,
+        background 150ms ease,
+        border-color 150ms ease;
 }
 
+.card:hover {
+    transform: translateY(-3px);
+
+    background: #18181c;
+
+    border-color: #3a3a42;
+}
+
+.card h3 {
+    margin:
+        0 0
+        10px;
+
+    font-size: 16px;
+
+    font-weight: 600;
+}
+
+.card p {
+    margin: 8px 0;
+
+    font-size: 14px;
+
+    line-height: 1.65;
+
+    color: #a1a1aa;
+}
+
+
+/* ─────────────────────────────
+   PROJECT SECTION
+   ───────────────────────────── */
+
 #project-div {
-    width: 100%;
-    height: 100%;
-    font-family: "Cinzel", serif;
+    width: min(100%, 1100px);
+
+    margin:
+        160px
+        auto
+        0;
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+}
+
+#project-div h1 {
+    margin-bottom: 40px;
+
+    font-size: clamp(42px, 6vw, 72px) !important;
+
+    font-weight: 700;
+
+    letter-spacing: -0.06em;
+
+    color: #f5f5f7;
+}
+
+
+/* ─────────────────────────────
+   PROJECT BUTTONS
+   ───────────────────────────── */
+
+#project-div button.card {
+    cursor: pointer;
+
+    appearance: none;
+
+    font-family: inherit;
+}
+
+#project-div button.card:hover {
+    border-color: #ff7a18;
+}
+
+#project-div button.card:active {
+    transform: translateY(-1px) scale(0.99);
+}
+
+#project-div button.card h3 {
+    color: #f5f5f7;
+}
+
+
+/* ─────────────────────────────
+   RESPONSIVE
+   ───────────────────────────── */
+
+@media (max-width: 700px) {
+
+    #content {
+        padding:
+            80px
+            20px
+            100px;
+    }
+
+    #Voxelium h1 {
+        font-size: 18vw;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        max-width: none;
+    }
+
+    #project-div {
+        margin-top: 100px;
+    }
 }

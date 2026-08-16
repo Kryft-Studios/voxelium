@@ -12,124 +12,188 @@
 </head>
 
 <body>
-    <!-- #region cloud transition-->
+    <!-- #region cloud transition -->
     <section id="hero">
-        <img id="world-image" src="1559446.jpg" alt="Voxelium World">
+        <img id="world-image" src="7046.jpg" alt="Voxelium World">
         <div id="clouds"></div>
+
         <div id="Voxelium">
             <h1>Voxelium</h1>
-            <p id="scroll-note">Scroll Down</p>
-            <!-- Simple Animation. Update:  I forgot css keyframes existed -->
+            <p id="scroll-note">Scroll to explore</p>
+
             <script defer>
                 const speed = 2;
                 let rn = 0;
-                let loopingDir = +0.01 * speed
-                const el = document.getElementById("scroll-note")
+                let loopingDir = 0.01 * speed;
+                const el = document.getElementById("scroll-note");
+
                 function loop() {
                     if (el.hidden) return requestIdleCallback(loop);
-                    el.style.opacity = `` + rn;
-                    let a = rn += loopingDir;
+
+                    el.style.opacity = rn;
+
+                    const a = rn += loopingDir;
+
                     if (a > 1) {
-                        loopingDir = -.01 * speed;
+                        loopingDir = -0.01 * speed;
                     } else if (a < 0) {
-                        loopingDir = .01 * speed
+                        loopingDir = 0.01 * speed;
                     }
 
-                    requestIdleCallback(loop)
+                    requestIdleCallback(loop);
                 }
-                requestIdleCallback(loop)
+
+                requestIdleCallback(loop);
             </script>
         </div>
     </section>
-    <script>
-        // Below is the cloud animation
 
-        // get elements
+    <script>
         const image = document.getElementById("world-image");
         const clouds = document.getElementById("clouds");
         const title = document.getElementById("Voxelium");
         const hero = document.getElementById("hero");
-        const scrollNote = document.getElementById("scroll-note")
-        // handle scroll
+        const scrollNote = document.getElementById("scroll-note");
+
         window.addEventListener("scroll", () => {
             scrollNote.hidden = true;
-            // now get the hero's height
+
             const heroHeight = hero.offsetHeight - window.innerHeight;
 
-            // get the scroll progress
-            const progress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1);
-            if (progress <= 0) scrollNote.hidden = false;
-            // Apply filters
+            const progress = Math.min(
+                Math.max(window.scrollY / heroHeight, 0),
+                1
+            );
+
+            if (progress <= 0) {
+                scrollNote.hidden = false;
+            }
+
             image.style.filter = `blur(${progress * 25}px)`;
             image.style.transform = `scale(${1 + progress * 0.15})`;
             image.style.opacity = 1 - progress;
 
-            // Clouds appear in middle
             const cloudProgress = Math.sin(progress * Math.PI);
             clouds.style.opacity = cloudProgress;
 
-            // Title fades away
             title.style.opacity = 1 - progress;
-
         });
-
     </script>
     <!-- #endregion -->
 
 
     <section id="content">
-        <!--Page Contents-->
+
+        <!-- Introduction -->
         <div id="intro-div">
-            <h2>Create Worlds</h2>
-            <p>The next evolution of bloxd programming! No more confusing code.</p>
+
+            <h2>Build Without Limits</h2>
+
+            <p>
+                A modern game development environment for creating
+                Bloxd worlds without being locked into one language or workflow.
+            </p>
+
             <div class="cards">
-                <div class="card">
-                    <h3>Use any language you want!</h3>
-                    <p><i><b>Ada, Java, GoLang, Python</b></i>, we support it all!</p>
-                    You can even make, Brainf***, why not?
-                    You can be a minecraft modder, godot developer, unity lover and still be a bloxd dev!
-                </div>
 
                 <div class="card">
-                    <h3>Strong Developer Support</h3>
-                    <p>Want to play a audio? Use our <strong>VXAudioManager</strong></p>
-                    Got a function a thousand lines long? we'd manage it!
-                </div>
+                    <h3>Code in Your Language</h3>
 
-                <div class="card">
-                    <h3>High Performance Code</h3>
-                    <p>We generate to low level & fast code. Want <strong>Pointers</strong> in bloxd? Well now you can!
+                    <p>
+                        Use the language you already know.
+                        <strong>Ada, Java, Go, Python</strong> and more.
                     </p>
-                    We'll auto manage the heap.
-                </div>
-            </div>
-        </div>
-        <div id = "project-div">
-            <h1 style="font-size:70px">Let's Go!</h1>
-            <div class="cards">
-                <button class="card" id = "open-proj">
-                    <h3>Open your Projects</h3>
-                    previews projects saved on your pc
-                </button>
-                <script defer>
 
-                </script>
-                <button class="card" id = "new-proj">
-                    <h3>Create a new Project</h3>
-                    creates a new world and saves it to your device
-                </button>
-                <script defer>
-                    document.getElementById("new-proj")
-                    .addEventListener("click",()=>{window.open("/gameeditor")})
-                </script>
-                <button class="card"><h3>Explore marketplace</h3>Explore third party and our assets</button>
+                    <p>
+                        Whether you're a Minecraft modder, Godot developer,
+                        Unity user, or just getting started, Voxelium gives
+                        you a familiar way to build for Bloxd.
+                    </p>
+                </div>
+
+
+                <div class="card">
+                    <h3>Powerful Developer Tools</h3>
+
+                    <p>
+                        Get built-in tools and APIs for common game-development tasks.
+                    </p>
+
+                    <p>
+                        Need audio?
+                        Use <strong>VXAudioManager</strong>.
+                        Building a large system?
+                        Voxelium is designed to handle projects of all sizes.
+                    </p>
+                </div>
+
+
+                <div class="card">
+                    <h3>High-Performance Code</h3>
+
+                    <p>
+                        Voxelium can compile your code into efficient,
+                        low-level representations designed for performance.
+                    </p>
+
+                    <p>
+                        Need pointers or manual memory-style operations?
+                        Voxelium can provide them while handling the underlying
+                        memory management for you.
+                    </p>
+                </div>
+
             </div>
         </div>
+
+
+        <!-- Projects -->
+        <div id="project-div">
+
+            <h1 style="font-size:70px">Let's Build.</h1>
+
+            <div class="cards">
+
+                <button class="card" id="open-proj">
+                    <h3>Open a Project</h3>
+                    Browse projects already saved on your PC.
+                </button>
+
+                <script defer>
+                </script>
+
+
+                <button class="card" id="new-proj">
+                    <h3>Create a Project</h3>
+                    Start a new world and save it directly to your device.
+                </button>
+
+                <script defer>
+                    document
+                        .getElementById("new-proj")
+                        .addEventListener("click", () => {
+                            window.open("/gameeditor");
+                        });
+                </script>
+
+
+                <button class="card">
+                    <h3>Explore the Marketplace</h3>
+                    Discover assets and tools from Voxelium and the community.
+                </button>
+
+            </div>
+        </div>
+
     </section>
 
-    <!--    Lucide Icon Handler -->
-    <script src="https://unpkg.com/lucide@latest"></script>'
-    <script defer>lucide.createIcons()</script>
+
+    <!-- Lucide Icon Handler -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer>
+        lucide.createIcons();
+    </script>
+
 </body>
 
 </html>
