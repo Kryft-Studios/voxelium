@@ -31,7 +31,20 @@ function createWindow() {
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
   })
-
+  win.webContents.on("did-create-window", (window, detail) => {
+    window.webContents.on("did-finish-load", () => {
+      if (window.getTitle() === "VX Game Maker") {
+        let saving = false;
+        window.on("close", async (event) => {
+          if (saving) return;
+          event.preventDefault();
+          saving = true;
+          await window.webContents.executeJavaScript(`await WT.saveAllChunks()`);
+          window.destroy()
+        })
+      }
+    })
+  })
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
   } else {
@@ -48,6 +61,9 @@ app.on('window-all-closed', () => {
     app.quit()
     win = null
   }
+})
+app.on("browser-window-created", (event, window) => {
+  console.log(window.title)
 })
 
 app.on('activate', () => {

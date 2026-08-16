@@ -120,6 +120,12 @@ export class VXWorldStorage {
 
         return this.z_chunkDbWorker;
     }
+    async saveAllChunks(){
+        const chunks:InstanceType<typeof Chunk>[] = Object.values(noa.world._storage.hash) 
+    for(const chunk of chunks){
+        await this.writeChunk(chunk.requestID, chunk);
+    }
+    }
     addEventListeners(noa: Engine) {
         VXWorldStorage.logger.log("helo")
         noa.world.on(

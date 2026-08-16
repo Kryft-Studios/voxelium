@@ -68,7 +68,6 @@ export class PlayerMovement {
         })
     }
     stopY(this: PlayerMovement){
-        console.log(this)
         this.physics.velocity[1] = 0
     }
 }
