@@ -4,9 +4,6 @@ import { VEC3 } from "../types/vectors"
 import { Engine } from "noa-engine"
 
 export class BlockManager<M extends string[] = []>  {
-    constructor() {
-
-    }
     materials: M = [] as string[] as M;
     material<NAME extends string>(name: NAME, options: BlockManager.TEXTURE_WITH_DEFAULT_COLOR): asserts this is BlockManager<[...M, NAME]> ;
     material<NAME extends string>(name: NAME, options: BlockManager.TEXTURE_WITH_URL): asserts this is BlockManager<[...M, NAME]> ;
@@ -16,21 +13,12 @@ export class BlockManager<M extends string[] = []>  {
         options: BlockManager.TEXTURE_WITH_DEFAULT_COLOR | BlockManager.TEXTURE_CUSTOM | BlockManager.TEXTURE_WITH_URL
     ): asserts this is BlockManager<[...M, NAME]> {
         this.materials.push(name)
-        let exopts!: BlockManager.NOA_MATERIAL_OPTS
-        // Co Routine to avoid typing .registerMaterial a million times
-        // "CO ROUTINES" BRO ESCAPED FROM C++ 😭😭😭😭😭😭😭😭
-        // For readers: this unnecesary but whatever
-        const cr = (function* () {
-            yield;
-            noa.registry.registerMaterial(name, exopts);
-        })();
 
         // CASE 1- COLOURED BLOCK
         {
             const coloured = options as BlockManager.TEXTURE_WITH_DEFAULT_COLOR
             if (coloured.color) {
-                exopts = coloured;
-                cr.next();
+                noa.registry.registerMaterial(name, {color: coloured.color })
                 return;
             }
         }
@@ -38,19 +26,17 @@ export class BlockManager<M extends string[] = []>  {
         {
             const wurl = options as BlockManager.TEXTURE_WITH_URL;
             if (wurl.url) {
-                exopts = {
+                noa.registry.registerMaterial(name, {
                     textureURL: wurl.url,
                     texHasAlpha: wurl.alpha
-                }
-                cr.next();
+                });
                 return;
             }
         }
         // CASE 3 - just fucking babylon.js Material
-        exopts = {
+        noa.registry.registerMaterial(name, {
             renderMaterial: (options as BlockManager.TEXTURE_CUSTOM).material
-        }
-        cr.next();
+        });
     }
 
     block(id: number, blockOpts: BlockManager.NOA_BLOCK_OPTS<M>){
