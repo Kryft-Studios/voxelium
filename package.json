@@ -19,9 +19,13 @@
   "main": "dist-electron/main.js",
   "dependencies": {
     "@babylonjs/core": "^9.19.0",
+    "@types/ndarray": "^1.0.14",
     "avsc": "^5.7.9",
     "babylonjs-inspector": "^9.19.0",
+    "game-inputs": "^0.8.0",
+    "ndarray": "^1.0.19",
     "noa-engine": "^0.33.0",
-    "voxel-crunch": "^0.2.1"
+    "voxel-crunch": "^0.2.1",
+    "voxel-physics-engine": "^0.13.0"
   }
 }

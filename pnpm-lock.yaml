@@ -11,18 +11,30 @@ importers:
       '@babylonjs/core':
         specifier: ^9.19.0
         version: 9.19.0
+      '@types/ndarray':
+        specifier: ^1.0.14
+        version: 1.0.14
       avsc:
         specifier: ^5.7.9
         version: 5.7.9
       babylonjs-inspector:
         specifier: ^9.19.0
         version: 9.19.0
+      game-inputs:
+        specifier: ^0.8.0
+        version: 0.8.0
+      ndarray:
+        specifier: ^1.0.19
+        version: 1.0.19
       noa-engine:
         specifier: ^0.33.0
         version: 0.33.0(@babylonjs/core@9.19.0)
       voxel-crunch:
         specifier: ^0.2.1
         version: 0.2.1
+      voxel-physics-engine:
+        specifier: ^0.13.0
+        version: 0.13.0
     devDependencies:
       electron:
         specifier: ^30.0.1
@@ -411,6 +423,9 @@ packages:
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
+
+  '@types/ndarray@1.0.14':
+    resolution: {integrity: sha512-oANmFZMnFQvb219SSBIhI1Ih/r4CvHDOzkWyJS/XRqkMrGH5/kaPSA1hQhdIBzouaE+5KpE/f5ylI9cujmckQg==}
 
   '@types/node@20.19.43':
     resolution: {integrity: sha512-6oYBAi5ikg4Pl+kGsoYtawUMBT2zZMCvPNF7pVLnHZfd1zf38DRiWn/gT01RYCdUqkv7Fhr+C9ot4/tb+2sVvA==}
@@ -1820,6 +1835,8 @@ snapshots:
       '@types/node': 20.19.43
 
   '@types/ms@2.1.0': {}
+
+  '@types/ndarray@1.0.14': {}
 
   '@types/node@20.19.43':
     dependencies:

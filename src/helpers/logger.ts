@@ -33,7 +33,7 @@ export class Logger {
 function c(any:Function){
     return function(this: Logger, ...a:any[]){
         if(this.shouldDebug){
-            any(this.tag, " ", ...a)
+            any("[",this.tag, "] ", ...a)
         }
     }
 }
