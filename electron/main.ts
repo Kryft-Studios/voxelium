@@ -184,7 +184,7 @@ async function main() {
               strings = (
                 await (
                   fetchResponse.json()
-                    .then((a: 
+                    .then((a:
                       // github gives much more but we are just using this because this is all we need
                       { tree: TREE_API_OUTPUT[] }
                     ) => {
@@ -313,9 +313,7 @@ async function main() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
-    "roundedCorners": true,
-    "modal": true,
-    "backgroundMaterial": "acrylic",
+    "fullscreenable": true,
     "title": "Voxelium Game Maker",
     "autoHideMenuBar": true
   })
@@ -327,25 +325,25 @@ async function main() {
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
   })
-  win.webContents.on("did-create-window", async (window) => {
+  win.webContents.on("did-create-window", (window) => {
     // wait for this new window to load
     console.log("hi")
-    await promisifyEventListener(window.webContents.on, "did-finish-load");
+    window.webContents.on("did-finish-load", () => {
+      // if its the vx game maker i.e. the main NOA pge
+      if (window.getTitle() === "VX Game Maker") {
 
-    // if its the vx game maker i.e. the main NOA page
-    if (window.getTitle() === "VX Game Maker") {
-
-      // handle saving
-      let saving = false;
-      window.on("close", async (event) => {
-        // if the os already warned then tell it to shu the fuh up
-        if (saving) return event.preventDefault();
-        event.preventDefault();
-        saving = true;
-        await window.webContents.executeJavaScript(`WT.saveAllChunks()`);
-        window.destroy();
-      })
-    }
+        // handle saving
+        let saving = false;
+        window.on("close", async (event) => {
+          // if the os already warned then tell it to shu the fuh up
+          if (saving) return event.preventDefault();
+          event.preventDefault();
+          saving = true;
+          await window.webContents.executeJavaScript(`WT.saveAllChunks()`);
+          window.destroy();
+        })
+      }
+    })
   })
 }
 

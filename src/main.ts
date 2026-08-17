@@ -7,7 +7,7 @@ const worldStorage = new VXWorldStorage("world1");
 noa.world.maxChunksPendingCreation = 1000
 // Render newly loaded/edited chunks immediately; the default waits for six
 // neighboring chunks before creating terrain meshes.
-noa.world.minNeighborsToMesh = 0
+
 
 const playerControls = new PlayerControls()
 // noa may request chunks while IndexedDB is opening. The handler itself waits

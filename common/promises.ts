@@ -1,3 +1,7 @@
+/**
+ * Promisify functions
+ */
+/** waits for a given amount of time */
 export function wait(
     ms: number
 ) {
