@@ -166,7 +166,7 @@ async function main() {
               let counter = 0;
 
               let success = false;
-              while (++counter >= MAX_RETRY) {
+              while (++counter <= MAX_RETRY) {
                 try {
                   await tryFetch();
 
