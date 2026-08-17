@@ -210,7 +210,7 @@ async function main() {
             ipcMain.once("loading-stop", stop);
 
             try {
-              for (let i = 0; i < strings.length && abortController.signal.aborted; i += CONCURRENCY) {
+              for (let i = 0; i < strings.length && !abortController.signal.aborted; i += CONCURRENCY) {
                 // get the urls in the batch we're doing
                 const batch = strings.slice(i, i + CONCURRENCY);
 
