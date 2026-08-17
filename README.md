@@ -4,94 +4,185 @@
 flowchart TD
     Root[Voxelium]
 
+    %% =========================
+    %% IDE
+    %% =========================
+
     Root --> IDE
 
     subgraph IDE["IDE"]
         Editor["Code Editor"]
         LanguageServer["Language Server"]
-        Diagnostics
+        Diagnostics["Diagnostics"]
         AutoComplete["Autocomplete"]
-        Hover
+        Hover["Hover"]
     end
 
     Editor --> LanguageServer
-    LanguageServer --> Parser
-    Analyzer --> Diagnostics
-    Analyzer --> Hover
+    LanguageServer --> Diagnostics
     LanguageServer --> AutoComplete
+    LanguageServer --> Hover
+
+    %% =========================
+    %% PROJECT
+    %% =========================
+
+    Root --> Project
+
+    subgraph Project["Project"]
+        Source["Source Code"]
+        Worlds["Worlds"]
+        Assets["Assets"]
+        Config["Project Config"]
+    end
+
+    %% =========================
+    %% LANGUAGES
+    %% =========================
 
     Root --> Languages
 
     subgraph Languages["Language Support"]
-        TS[TypeScript]
-        Java
-        Rust
-        Python
-        CSharp[C#]
+
+        TS["TypeScript"]
+        Java["Java"]
+        Rust["Rust"]
+        Python["Python"]
+        CSharp["C#"]
+        CCpp["C / C++"]
+
+        TSParser["Official TypeScript Compiler API"]
+        JavaParser["tree-sitter-java"]
+        RustParser["tree-sitter-rust"]
+        PythonParser["tree-sitter-python"]
+        CSharpParser["tree-sitter-c-sharp"]
+        CParser["tree-sitter-c / tree-sitter-cpp"]
+
+        TSFrontend["TypeScript Frontend"]
+        JavaFrontend["Java Frontend"]
+        RustFrontend["Rust Frontend"]
+        PythonFrontend["Python Frontend"]
+        CSharpFrontend["C# Frontend"]
+        CFrontend["C / C++ Frontend"]
     end
 
-    TS --> Parser
-    Java --> Parser
-    Rust --> Parser
-    Python --> Parser
-    CSharp --> Parser
+    TS --> TSParser --> TSFrontend
+    Java --> JavaParser --> JavaFrontend
+    Rust --> RustParser --> RustFrontend
+    Python --> PythonParser --> PythonFrontend
+    CSharp --> CSharpParser --> CSharpFrontend
+    CCpp --> CParser --> CFrontend
+
+    TSFrontend --> VoxIR
+    JavaFrontend --> VoxIR
+    RustFrontend --> VoxIR
+    PythonFrontend --> VoxIR
+    CSharpFrontend --> VoxIR
+    CFrontend --> VoxIR
+
+    Source --> Languages
+
+    %% =========================
+    %% LSP
+    %% =========================
+
+    ExternalLSP["External LSP"]
+
+    ExternalLSP --> LSPAdapter["LSP Adapter"]
+    LSPAdapter --> LanguageServer
+
+    %% =========================
+    %% COMPILER
+    %% =========================
 
     Root --> Compiler
 
     subgraph Compiler["Compiler Pipeline"]
-        Parser
-        VoxIR
-        Analyzer
+        VoxIR["VoxIR"]
+        Analyzer["Analyzer"]
         IUChecker["IU Checker"]
-        Optimizer
+        Optimizer["Optimizer"]
         JSGen["JavaScript Generator"]
         RawJS["Raw JavaScript"]
     end
 
-    Parser --> VoxIR
-
     VoxIR --> Analyzer
-    VoxIR --> IUChecker
-    VoxIR --> Optimizer
-
-    Analyzer --> Optimizer
+    Analyzer --> IUChecker
     IUChecker --> Optimizer
+    Analyzer --> Optimizer
+    VoxIR --> Optimizer
 
     Optimizer --> JSGen
     JSGen --> RawJS
 
+    RawJS --> WorldCode["Main World Code"]
+
+    %% =========================
+    %% SCENE EDITOR
+    %% =========================
+
     Root --> Scene
 
     subgraph Scene["Scene Editor"]
+
+        Renderer["Renderer"]
         BabylonJS["Babylon.js"]
+
+        World["World"]
         NoaJS["NOA.js"]
-        WorldCode["Main World Code"]
-        Blocks
-        Assets
+
+        Blocks["Blocks"]
+        SceneAssets["Assets"]
         CustomTexturePack["Custom Texture Pack"]
     end
 
-    BabylonJS --> NoaJS
-    BabylonJS --> Assets
-    NoaJS --> Blocks
-    Assets --> CustomTexturePack
+    Renderer --> BabylonJS
+    World --> NoaJS
 
-    RawJS --> WorldCode
+    BabylonJS --> NoaJS
+    NoaJS --> Blocks
+
+    Scene --> Renderer
+    Scene --> World
+    Scene --> Blocks
+    Scene --> SceneAssets
+    SceneAssets --> CustomTexturePack
+
+    %% =========================
+    %% WORLD / SCHEMATIC
+    %% =========================
 
     Blocks --> VoxelCrunch["VoxelCrunch Encoding"]
+    VoxelCrunch --> BloxdSchem[".bloxdschem"]
 
-    WorldCode --> BloxdSchem[".bloxdschem"]
-    VoxelCrunch --> BloxdSchem
+    Worlds --> Scene
+    World --> Worlds
 
-    CustomTexturePack --> BloxdReq
+    %% =========================
+    %% BLOXD INTEGRATION
+    %% =========================
 
-    subgraph BloxdPopup["Bloxd Integration"]
+    Root --> BloxdIntegration
+
+    subgraph BloxdIntegration["Bloxd Integration"]
+
         BloxdLoginPopup["Bloxd Login Popup"]
         MetricCookies["Metric Cookies\n(fetch monkeypatch)"]
+        BloxdRequestClient["Bloxd Request Client"]
     end
 
-    BloxdLoginPopup --> BloxdReq
-    MetricCookies --> BloxdReq
+    BloxdLoginPopup --> BloxdRequestClient
+    MetricCookies --> BloxdRequestClient
 
-    BloxdSchem --> BloxdReq["save-schematic-to-profile"]
+    BloxdSchem --> BloxdRequestClient
+    WorldCode --> BloxdRequestClient
+    CustomTexturePack --> BloxdRequestClient
+
+    %% =========================
+    %% PROJECT CONNECTIONS
+    %% =========================
+
+    Assets --> SceneAssets
+    Worlds --> World
+    Source --> Editor
 ```
