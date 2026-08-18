@@ -1,7 +1,7 @@
 import { Engine } from "noa-engine"
 import { VEC3, VEC4 } from "../types/vectors";
 
-interface Opts {
+interface OPTS {
     debug: boolean, // default false
     silent: boolean, // default false
     playerHeight: number, // default 1.8
@@ -51,8 +51,8 @@ interface Opts {
     manuallyControlChunkLoading: boolean,
     worldGenWhilePaused: boolean
 }
-type Opt_ = Partial<Opts>
-export const opts: Opt_ = {
+type OPT_ = Partial<OPTS>
+export const OPTS: OPT_ = {
     debug: true,
     silent: false,
     showFPS: true,
@@ -61,14 +61,27 @@ export const opts: Opt_ = {
     chunkRemoveDistance: 3.5,
     playerStart: [0, 0, 0],
 }
-export const noa = new Engine(opts);
+/**
+ * The noa engine
+ */
+export const NOA = new Engine(OPTS);
+/** 
+ * The player's entity in noa
+*/
+export const PLAYERET = NOA.playerEntity;
 
-export const playerEntity = noa.playerEntity;
-export const playerMovement = noa.entities.getMovement(noa.playerEntity);
+/**
+ * Movement controls for the noa entity of the player
+ */
+export const PLAYERMMT = NOA.entities.getMovement(NOA.playerEntity);
+
 // *************** 
 // =====NOTE=====
 // ***************
 // playerPhysics and noa.ents.getPhysics are entirely different.
 // playerPhysics is noa's physics manager, where as
 // noa.ents.getPhysics is noa's voxel-physics-engine body
-export const playerPhysics = noa.physics
+/**
+ * The physics control
+ */
+export const PLAYERPHY = NOA.physics

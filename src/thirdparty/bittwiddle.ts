@@ -11,7 +11,7 @@
 
 "use strict"; "use restrict";
 
-export const log2 = function (v: number) {
+export function log2 (v: number) {
     let r, shift;
     //@ts-ignore
     r = (v > 0xFFFF) << 4; v >>>= r;

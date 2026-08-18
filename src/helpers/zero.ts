@@ -1,5 +1,6 @@
-export default function zero(obj: any, properties: (string|symbol|number)[]){
-for(const prop of properties){
-    obj[prop]=0
-}
+/** a helper function to zero all the properties in the object */
+export default function zero(obj: any, properties: (string | symbol | number)[]) {
+    for (const PROP of properties) {
+        obj[PROP] = 0
+    }
 }

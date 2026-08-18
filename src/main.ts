@@ -1,42 +1,39 @@
-import { noa } from "./scenemgmt/initialRegister";
+import { NOA } from "./scenemgmt/initialRegister";
 import { BlockManager } from "./systems/blockManager";
 import { PlayerControls } from "./systems/playerControls";
 import { VXWorldStorage } from "./systems/storeMgr"
 
-const worldStorage = new VXWorldStorage("world1");
-noa.world.maxChunksPendingCreation = 1000
-// Render newly loaded/edited chunks immediately; the default waits for six
-// neighboring chunks before creating terrain meshes.
+const STORAGE = new VXWorldStorage("world2");
+NOA.world.maxChunksPendingCreation = 1000
 
-
-const playerControls = new PlayerControls()
+const CONTROLS = new PlayerControls()
 // noa may request chunks while IndexedDB is opening. The handler itself waits
 // for z_initPromise, so attach it before the first await to avoid losing them.
-worldStorage.addEventListeners(noa);
-await worldStorage.init()
+STORAGE.addEventListeners();
+await STORAGE.init()
 
 // The pending-count promise does not guarantee that this particular chunk has
 // been created. Wait for the chunk that will receive the test block instead.
 await new Promise<void>((resolve) => {
-    if (noa.world._storage.getChunkByIndexes(0, 0, 0)) {
+    if (NOA.world._storage.getChunkByIndexes(0, 0, 0)) {
         resolve();
         return;
     }
 
-    const onChunkAdded = (chunk: { i: number, j: number, k: number }) => {
+    const OCA_EV = (chunk: { i: number, j: number, k: number }) => {
         if (chunk.i !== 0 || chunk.j !== 0 || chunk.k !== 0) return;
-        noa.world.off("chunkAdded", onChunkAdded);
+        NOA.world.off("chunkAdded", OCA_EV);
         resolve();
     };
-    noa.world.on("chunkAdded", onChunkAdded);
+    NOA.world.on("chunkAdded", OCA_EV);
 });
 
-const blockManager: BlockManager = new BlockManager();
-blockManager.material("dirt", {color: [1,0,1]});
-const dirt = blockManager.block(1, {"material":"dirt"});
+const BLOCKS: BlockManager = new BlockManager();
+BLOCKS.material("dirt", {color: [0,1,1]});
+const DIRT = BLOCKS.block(1, {"material":"dirt"});
 ;
-(window as any).WT = worldStorage;
+(window as any).WT = STORAGE;
 // The player starts at [0, 0, 0] and the camera initially faces +Z.
 // Put the test block in front of the camera rather than inside the player.
-noa.setBlock(dirt, 0, 1, 3);
+NOA.setBlock(DIRT, 0, 1, 3);
 

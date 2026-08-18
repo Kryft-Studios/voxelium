@@ -7,10 +7,10 @@ import { interval, promisifyEventListener } from '../common/promises'
 import { logLines } from '../common/logLines'
 
 // we are in dist-electron/main.js
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const DIRNAME = path.dirname(fileURLToPath(import.meta.url))
 
 // app root
-process.env.APP_ROOT = path.join(__dirname, '..')
+process.env.APP_ROOT = path.join(DIRNAME, '..')
 
 // DRI
 const APPRT = process.env.APP_ROOT;
@@ -33,7 +33,12 @@ logLines(
   `DevMode: ${IS_DEV}`,
   `Vite: ${process.env.VITE_PUBLIC}`
 );
-
+/**
+ *  Loads a HTML Page
+ * 
+ * If vite -> loads dev server URL
+ * If local -> loads dist file
+ */
 function loadHTML(window: BrowserWindow,
   /**Relative to project root */
   path: string) {
@@ -47,19 +52,30 @@ function getPath(path: string, prefix: string = "html") {
   return `${IS_DEV ? VITE_DEV_SERVER_URL : RENDERER_DIST}/${path}${IS_DEV ? "" : `.${prefix}`}`
 }
 
+/**
+ * Output from the Github TREE API.
+ * 
+ * GHTA has more stuff but only path is included here as its the only thing we need
+ */
 interface TREE_API_OUTPUT {
+
+  /* the path relative to the repo fetched */
   path: string,
-  mode: string,
-  type: string,
-  sha: string,
-  size: number,
-  url: string
 }
+
 // predef so GC doesnt eat it like a monster
+/** The main index window */
 let win!: BrowserWindow
+/** The loading screen window */
 let loadingWin!: BrowserWindow;
 
+/**
+ * The main function.
+ * 
+ * This is like the main function in lower languages.
+ */
 async function main() {
+
   try {
     /**
      * used for cancelling minimum timeout if user clicks stop before its done
@@ -95,10 +111,11 @@ async function main() {
           // load the 'loading.html' page
           loadHTML(loadingWin, "loading");
           // wait for the HTML to load
-          const ev = loadingWin.webContents.once.bind(loadingWin.webContents);
+          /** Electron webcontents [THE HTML PAGE] event listener */
+          const EV = loadingWin.webContents.once.bind(loadingWin.webContents);
           console.log("started loading", loadingWin.webContents.once.toString())
           try {
-            await promisifyEventListener(ev, "did-finish-load")
+            await promisifyEventListener(EV, "did-finish-load")
           } catch (e) {
             console.log("uh oh", JSON.stringify(loadingWin.webContents.once))
           }
@@ -120,6 +137,8 @@ async function main() {
 
             loadingWin.webContents.executeJavaScript(`setStopped()`)
             await stopFn()
+
+            // now destroy the whole parent promise
             reject()
           }
 
@@ -130,41 +149,37 @@ async function main() {
             loadingWin.webContents.executeJavaScript(`setProgress(0,1,"Starting to download the bloxd texture pack")`)
             console.log("Begin downloading bloxd texture pack")
 
-            // make the directory in appdata, normally AppData/Roaming/voxeliumbgm
-            //(depends on OS)
-            mkdirSync(pathTools.join(USER_DATA_FOLDER, "bloxdTexturePack"));
-            // handle abortion
-            const abortController = new AbortController();
-
-            const stop = () => {
-              // abort all fetch signals
-              abortController.abort();
-
-              // remove the file we're putting stuff to
-              rmSync(pathTools.join(USER_DATA_FOLDER, "bloxdTexturePack"), {
-                // flags to stop the OS from doing "dir not empty"
-                "recursive": true,
-                "force": true
-              })
-            };
-
             // use Github TREE API to fetch all blocks in the default texture pack in bloxd.
             console.log("Fetching files from Bloxdy/texture-api via Github Tree API")
+
+            /** the filtered output from the Bloxdy/texture-api repo*/
             let strings!: TREE_API_OUTPUT[]
+
+            /** The response from the attempt to fetch */
             let fetchResponse!: Response;
+            /** A function to try to fetch the github tree api contents. throw error =fail */
             async function tryFetch() {
-              !(fetchResponse = await fetch("https://api.github.com/repos/Bloxdy/texture-packs/git/trees/main?recursive=1")).ok ?
-                (() => { throw "" })() : void 0
+
+              // throws error if fetch throws error
+              // throws error if response not OK
+              !(
+                fetchResponse = await fetch("https://api.github.com/repos/Bloxdy/texture-packs/git/trees/main?recursive=1")
+              ).ok ?
+                // IIFE to fail
+                (() => { throw "" })() :
+                // nothing
+                void 0
             }
             try {
               await tryFetch()
             } catch (e) {
-              // retries
+              /**  retries */
               const MAX_RETRY = 10;
 
-              // times retried
+              /**  times retried */
               let counter = 0;
 
+              /** Whether the retries were successful */
               let success = false;
               while (++counter <= MAX_RETRY) {
                 try {
@@ -175,8 +190,11 @@ async function main() {
                   break;
                 } catch { }
               }
+
+              // the user prob has no internet or bad internet
               if (!success) {
-                await fail("Failed to fetch the bloxd api contents using GitHub TREE API [Retried 10 times]. You may be offline.", stop);
+                // GUI
+                await fail("Failed to fetch the bloxd api contents using GitHub TREE API [Retried 10 times]. You may be offline.", new Function());
                 return;
               }
             }
@@ -204,32 +222,58 @@ async function main() {
 
             }
             console.log(`Filtered and got ${strings.length} textures that are possibly for blocks`);
-            // max concurrent downloads
+            /** max concurrent downloads */
             const CONCURRENCY = 12;
 
-            ipcMain.once("loading-stop", stop);
+            // make the directory in appdata, normally AppData/Roaming/voxeliumbgm
+            //(depends on OS)
+            // linux has smth else
+            // usr/data/..?
+            // linux users u can comment here :)
+            // -----> []
+            mkdirSync(pathTools.join(USER_DATA_FOLDER, "bloxdTexturePack"));
 
+            // handle abortion
+            /** JS AbortController. A hybrid, can be used by both user code and JS fetch */
+            const ABORT_CONTROLLER=  new AbortController();
+
+            /** A function that stops the fetching of bloxd texture packs */
+            const STOP = () => {
+              // abort all fetch signals
+              ABORT_CONTROLLER.abort();
+
+              // remove the file we're putting stuff to
+              rmSync(pathTools.join(USER_DATA_FOLDER, "bloxdTexturePack"), {
+                // flags to stop the OS from doing "dir not empty"
+                "recursive": true,
+                "force": true
+              })
+            };
+            // if the user clicks the STOP button
+            ipcMain.once("loading-stop", STOP);
             try {
-              for (let i = 0; i < strings.length && !abortController.signal.aborted; i += CONCURRENCY) {
+              for (let i = 0; i < strings.length && !ABORT_CONTROLLER.signal.aborted; i += CONCURRENCY) {
                 // get the urls in the batch we're doing
-                const batch = strings.slice(i, i + CONCURRENCY);
+                /** The URLs to be fetched and written */
+                const BATCH = strings.slice(i, i + CONCURRENCY);
 
                 // ui
                 loadingWin.webContents.executeJavaScript(`setProgress(${i}, ${strings.length}, "Download bloxd texture pack.. (parallel 12 downloads)")`);
                 // now do the fetch's
                 await Promise.all(
-                  batch.map(async (texture) => {
+                  BATCH.map(async (texture) => {
                     // return if aborted
-                    if (abortController.signal.aborted) return;
+                    if (ABORT_CONTROLLER.signal.aborted) return;
 
                     // use the github RAW CONTENT API (raw.githubusercontent.com)
-                    const rawURL = `https://raw.githubusercontent.com/Bloxdy/texture-packs/main/${texture.path}`;
+                    const URL = `https://raw.githubusercontent.com/Bloxdy/texture-packs/main/${texture.path}`;
 
+                    /** Response from the github raw content api */
                     let response!: Response;
                     async function tryFetch() {
-                      !(response = await fetch(rawURL, {
+                      !(response = await fetch(URL, {
                         // abortion signal
-                        signal: abortController.signal
+                        signal: ABORT_CONTROLLER.signal
                       })).ok ?
                         // IIFE to jump to the catch block if response not OK
                         (() => { throw "" })() :
@@ -238,6 +282,7 @@ async function main() {
                     }
                     try {
                       // try fetching normally
+                      // not to be confused with the tryFetch in the github tree api fetch test
                       await tryFetch()
                     } catch (e) {
 
@@ -259,30 +304,30 @@ async function main() {
                         } catch (e) { }
                       }
                       if (!success) {
-                        fail(`Tried to fetch ${rawURL} but failed [5 Retries]. You may not be connected to the internet.`, stop)
+                        fail(`Tried to fetch ${URL} but failed [5 Retries]. You may not be connected to the internet.`, STOP)
                         return;
                       }
                     }
 
-                    if (abortController.signal.aborted) return;
+                    if (ABORT_CONTROLLER.signal.aborted) return;
 
-                    const data = await response.arrayBuffer();
-                    if (abortController.signal.aborted) return;
+                  const DATA = await response.arrayBuffer();
+                    if (ABORT_CONTROLLER.signal.aborted) return;
 
                     // write
-                    writeFileSync(pathTools.join(USER_DATA_FOLDER, "bloxdTexturePack", pathTools.basename(texture.path)), Buffer.from(data));
+                    writeFileSync(pathTools.join(USER_DATA_FOLDER, "bloxdTexturePack", pathTools.basename(texture.path)), Buffer.from(DATA));
                   })
                 );
               }
             } catch (err) {
-              if (abortController.signal.aborted) {
-                fail("Texture Download Cancelled!", stop)
+              if (ABORT_CONTROLLER.signal.aborted) {
+                fail("Texture Download Cancelled!", STOP)
               } else {
                 throw err;
               }
             } finally {
               rejectExtraTime()
-              ipcMain.removeListener("loading-stop", stop);
+              ipcMain.removeListener("loading-stop", STOP);
             }
           }
 
@@ -311,7 +356,7 @@ async function main() {
      * {@link ./preload.ts}
      */
     webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs'),
+      preload: path.join(DIRNAME, 'preload.mjs'),
     },
     "fullscreenable": true,
     "title": "Voxelium Game Maker",

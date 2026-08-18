@@ -101,9 +101,34 @@ button:focus-visible {
   left: 10px;
   z-index: 99999999;
 }
+:root {
+  --amtofbuttons: 10
+}
 .toprightbutton {
   border: solid 5px #242424;
 }
 .toprightbutton:active,.toprightbutton:hover {
   border: solid 5px #888 !important
+}
+.centerbottom {
+  position: absolute;
+  bottom: 10px;
+  /* if it works dont touch it broski */
+  left: calc(50vw - calc(var(--amtofbuttons) *  30px));
+  z-index: 999999999999999999999;
+  display: flex;
+ flex-direction: row;
+}
+
+.centerbottom button {
+  height: 50px;
+  width: 50px;
+  margin-right: 10px;
+  background-color: transparent;
+  border: solid 1px #1a1a1a;
+  transition: none;
+}
+
+.inven-selected {
+  border: solid 3px black  !important
 }
