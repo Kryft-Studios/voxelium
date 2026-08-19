@@ -40,8 +40,6 @@ flowchart TD
     WorldCode --> Bloxd
     Schem --> Bloxd
     Assets --> Bloxd
-
-    Bloxd --> BloxdAPI["Bloxd"]
 ```
 ```mermaid
 flowchart TD
