@@ -1,5 +1,48 @@
+
 # Voxelium
 
+# Simple idea
+```mermaid
+flowchart TD
+    Voxelium
+
+    Voxelium --> IDE
+    Voxelium --> Project
+    Voxelium --> Compiler
+    Voxelium --> Scene
+    Voxelium --> Bloxd
+
+    IDE --> Editor["Code Editor"]
+    IDE --> LSP["Language Server"]
+
+    Project --> Source["Source Code"]
+    Project --> Worlds["Worlds"]
+    Project --> Assets["Assets"]
+
+    Source --> Frontends["Language Frontends"]
+    Frontends --> VoxIR["VoxIR"]
+
+    VoxIR --> Analyzer
+    Analyzer --> Optimizer
+    Optimizer --> JSGen["JS Generator"]
+    JSGen --> WorldCode["World Code"]
+
+    Scene --> Renderer
+    Scene --> World
+    Scene --> Blocks
+
+    Renderer --> Babylon["Babylon.js"]
+    World --> NOA["NOA.js"]
+
+    Blocks --> Schem[".bloxdschem"]
+    Worlds --> World
+
+    WorldCode --> Bloxd
+    Schem --> Bloxd
+    Assets --> Bloxd
+
+    Bloxd --> BloxdAPI["Bloxd"]
+```
 ```mermaid
 flowchart TD
     Root[Voxelium]
